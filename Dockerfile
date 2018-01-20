@@ -14,10 +14,17 @@ RUN pip3 install meson
 RUN apt-get install -y zlib1g-dev        # libzim kiwix-tools
 RUN apt-get install -y liblzma-dev       # libzim
 RUN apt-get install -y libicu-dev        # libzim kiwix-lib
-RUN apt-get install -y libxapian-dev     # libzim kiwix-lib
 RUN apt-get install -y libpugixml-dev    # kiwix-lib
 RUN apt-get install -y libctpp2-dev      # kiwix-lib kiwix-tools
 RUN apt-get install -y libmicrohttpd-dev # kiwix-tools
+
+# Compile xapian
+COPY xapian xapian
+WORKDIR xapian
+RUN ./configure
+RUN make
+RUN make install
+WORKDIR /
 
 # Compile libzim
 COPY libzim libzim
