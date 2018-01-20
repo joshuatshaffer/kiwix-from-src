@@ -2,6 +2,7 @@ FROM ubuntu:xenial
 RUN apt-get update
 
 # Install build tools/systems
+RUN apt-get install -y cmake
 RUN apt-get install -y ninja-build
 RUN apt-get install -y automake
 RUN apt-get install -y libtool-bin
@@ -14,7 +15,6 @@ RUN pip3 install meson
 RUN apt-get install -y zlib1g-dev        # libzim kiwix-tools
 RUN apt-get install -y liblzma-dev       # libzim
 RUN apt-get install -y libicu-dev        # libzim kiwix-lib
-RUN apt-get install -y libpugixml-dev    # kiwix-lib
 RUN apt-get install -y libctpp2-dev      # kiwix-lib kiwix-tools
 RUN apt-get install -y libmicrohttpd-dev # kiwix-tools
 
@@ -34,6 +34,14 @@ RUN meson . build
 WORKDIR build
 RUN ninja
 RUN ninja install
+WORKDIR /
+
+# Compile pugixml
+COPY pugixml pugixml
+WORKDIR pugixml
+RUN cmake . -DBUILD_PKGCONFIG=ON
+RUN make
+RUN make install
 WORKDIR /
 
 # Compile kiwix-lib
